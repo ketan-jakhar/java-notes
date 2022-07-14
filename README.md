@@ -136,7 +136,7 @@ Lets call one thread as T1 and the other as T2. Say the counter value is equal t
 #### Parallelism
 
 <p>A parallel system is one which necessarily has the ability to execute multiple programs at the same time.</p>
-<p>Usually, this capability is aided by hardware in the form of multicore processors on individual machines or as computing clusters where several machines are hooked up to solve independent pieces of a problem simultaneously.</p>
+<p>Usually, this capability is aided by hardware in the form of multi-core processors on individual machines or as computing clusters where several machines are hooked up to solve independent pieces of a problem simultaneously.</p>
 
 - Remember an individual problem has to be concurrent in nature, that is portions of it can be worked on independently without affecting the final outcome before it can be executed in parallel.
 - <b>In parallel systems the emphasis is on increasing throughput and optimizing usage of hardware resources. The goal is to extract out as much computation speedup as possible.</b>
@@ -148,7 +148,7 @@ Lets call one thread as T1 and the other as T2. Say the counter value is equal t
 
 #### Concurrency vs Parallelism
 
-- From the above discussion it should be apparent that a concurrent system need not be parallel, whereas a parallel system is indeed concurrent. Additionally, a system can be both concurrent and parallel e.g. a multitasking operating system running on a multicore machine
+- From the above discussion it should be apparent that a concurrent system need not be parallel, whereas a parallel system is indeed concurrent. Additionally, a system can be both concurrent and parallel e.g. a multitasking operating system running on a multi-core machine
 - Concurrency is about dealing with lots of things at once.
 - Parallelism is about doing lots of things at once.
   <br/>
@@ -388,7 +388,7 @@ both threads are blocked now
 
 <p>A semaphore can potentially act as a mutex if the permits it can give out is set to 1.</p>
 
-- However, the most important difference between the two is that in case of a mutex the same thread must call acquire and subsequent release on the mutex whereas in case of a binary sempahore, different threads can call acquire and release on the semaphore.
+- However, the most important difference between the two is that in case of a mutex the same thread must call acquire and subsequent release on the mutex whereas in case of a binary semaphore, different threads can call acquire and release on the semaphore.
 - This leads us to the concept of ownership. <b>A mutex is owned by the thread acquiring it till the point the owning-thread releases it</b>, whereas for a semaphore there's no notion of ownership.
 
 ---
@@ -410,6 +410,278 @@ both threads are blocked now
 - Mutex if locked, must necessarily be unlocked by the same thread. A semaphore can be acted upon by different threads. This is true even if the semaphore has a permit of one
 
 - Think of semaphore analogous to a car rental service such as Hertz. Each outlet has a certain number of cars, it can rent out to customers. It can rent several cars to several customers at the same time but if all the cars are rented out then any new customers need to be put on a waitlist till one of the rented cars is returned. In contrast, think of a mutex like a lone runway on a remote airport. Only a single jet can land or take-off from the runway at a given point in time. No other jet can use the runway simultaneously with the first aircraft.
+
+---
+
+---
+
+---
+
+## Threading Basics
+
+### Setting-up threads
+
+#### Creating Threads
+
+<p>To use threads, we need to first create them. In the Java language framework, there are multiple ways of setting up threads.</p>
+
+#### Runnable Interface
+
+- When we create a thread, we need to provide the created thread code to execute, or in other words we need to tell the thread what task to execute.
+- The code can be provided as an object of a class that implements the `Runnable` interface. As the name implies, the interface forces the implementing class to provide a run method which in turn is invoked by the thread when it starts.
+- The runnable interface is the basic abstraction to represent a logical task in Java.
+
+```java
+class Demonstration {
+    public static void main( String args[] ) {
+        Thread t = new Thread(new Runnable() {
+
+            public void run() {
+                System.out.println("Say Hello");
+            }
+        });
+        t.start();
+    }
+}
+```
+
+- We defined an anonymous class inside the Thread class’s constructor and an instance of it is instantiated and passed into the Thread object.
+- Personally, I feel anonymous classes decrease readability and would prefer to create a separate class implementing the Runnable interface. An instance of the implementing class can then be passed into the Thread object’s constructor. Let’s see how that could have been done.
+
+```java
+class Demonstration {
+    public static void main( String args[] ) {
+
+        ExecuteMe executeMe = new ExecuteMe();
+        Thread t = new Thread(executeMe);
+        t.start();
+    }
+}
+
+class ExecuteMe implements Runnable {
+
+  public void run() {
+    System.out.println("Say Hello");
+  }
+
+}
+```
+
+---
+
+#### Subclassing/extending Thread class
+
+- The second way to set up threads is to subclass the Thread class itself as shown below.
+
+```java
+class Demonstration {
+    public static void main( String args[] ) throws Exception {
+        ExecuteMe executeMe = new ExecuteMe();
+        executeMe.start();
+        executeMe.join();
+
+    }
+}
+
+class ExecuteMe extends Thread {
+
+  @Override
+  public void run() {
+    System.out.println("I ran after extending Thread class");
+  }
+
+}
+```
+
+- The con of the second approach is that one is forced to extend the Thread class which limits code’s flexibility. Passing in an object of a class implementing the Runnable interface may be a better choice in most cases.
+
+---
+
+### Basic Thread Handling
+
+#### Joining Threads
+
+- The `join()` method in Java is provided by the java.lang.Thread class that permits one thread to wait until the other thread to finish its execution. Suppose `th` be the object the class Thread whose thread is doing its execution currently, then the `th.join();` statement ensures that `th` is finished before the program does the execution of the next statement.
+- When there are more than one thread invoking the `join()` method, then it leads to overloading on the `join()` method that permits the developer or programmer to mention the waiting period. However, similar to the `sleep()` method in Java, the `join()` method is also dependent on the OS for the timing, so we should not assume that the `join()` method waits equal to the time we mention in the parameters.
+
+- A thread is always created by another thread except for the main application thread. Study the following code snippet. The `innerThread` is created by the thread which executes the `main` method. You may wonder what happens to the `innerThread` if the main thread finishes execution before the `innerThread` is done?
+
+```java
+class Demonstration {
+    public static void main( String args[] ) throws InterruptedException {
+
+        ExecuteMe executeMe = new ExecuteMe();
+        Thread innerThread = new Thread(executeMe);
+        innerThread.setDaemon(true);
+        innerThread.start();
+    }
+}
+
+class ExecuteMe implements Runnable {
+
+  public void run() {
+    while (true) {
+      System.out.println("Say Hello over and over again.");
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException ie) {
+        // swallow interrupted exception
+      }
+    }
+  }
+}
+```
+
+- If you execute the above code, you’ll see no output. That is because the main thread exits right after starting the `innerThread`.
+- Once it exits, the JVM also kills the spawned thread. On line 6 we mark the `innerThread` thread as a daemon thread, which we’ll talk about shortly, and is responsible for `innerThread` being killed as soon as the main thread completes execution. Do bear in mind, that if the main thread context switches just after executing Line 7, we may see some output from the `innerThread`, till the main thread is context switched back in and exits.
+
+---
+
+#### Daemon Threads
+
+- A daemon thread runs in the background but as soon as the main application thread exits, all daemon threads are killed by the JVM. A thread can be marked daemon as follows:
+
+```java
+innerThread.setDaemon(true);
+```
+
+---
+
+#### Sleeping Threads
+
+- The method `sleep()` is being used to halt the working of a thread for a given amount of time. The time up to which the thread remains in the sleeping state is known as the sleeping time of the thread. After the sleeping time is over, the thread starts its execution from where it has left.
+- A thread can be made dormant for a specified period using the sleep method.
+- However, be wary to not use sleep as a means for coordination among threads. It is a common newbie mistake. Java language framework offers other constructs for thread synchronization
+
+```java
+class SleepThreadExample {
+    public static void main( String args[] ) throws Exception {
+        ExecuteMe executeMe = new ExecuteMe();
+        Thread innerThread = new Thread(executeMe);
+        innerThread.start();
+        innerThread.join();
+        System.out.println("Main thread exiting.");
+    }
+    static class ExecuteMe implements Runnable {
+
+        public void run() {
+            System.out.println("Hello. innerThread going to sleep");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ie) {
+                // swallow interrupted exception
+            }
+        }
+    }
+}
+```
+
+- In the above example, the `innerThread` is made to sleep for 1 second and from the output of the program, one can see that main thread exits only after `innerThread` is done processing. If we remove the join statement on line-6, then the main thread may print its statement before `innerThread` is done executing.
+
+---
+
+#### Interrupting Threads
+
+- If any thread is in sleeping or waiting state (i.e. sleep() or wait() is invoked), calling the interrupt() method on the thread, breaks out the sleeping or waiting state throwing InterruptedException. If the thread is not in the sleeping or waiting state, calling the interrupt() method performs normal behaviour and doesn't interrupt the thread but sets the interrupt flag to true. Let's first see the methods provided by the Thread class for thread interruption.
+
+<p>The 3 methods provided by the Thread class for interrupting a thread</p>
+
+```java
+public void interrupt()
+```
+
+```java
+public static boolean interrupted()
+```
+
+```java
+public boolean isInterrupted()
+```
+
+---
+
+- In the previous code snippets, we wrapped the calls to join and sleep in try/catch blocks. Imagine a situation where if a rogue thread sleeps forever or goes into an infinite loop, it can prevent the spawning thread from moving ahead because of the join call. Java allows us to force such a misbehaved thread to come to its senses by interrupting it. An example appears below.
+
+```java
+class HelloWorld {
+    public static void main( String args[] ) throws InterruptedException {
+        ExecuteMe executeMe = new ExecuteMe();
+        Thread innerThread = new Thread(executeMe);
+        innerThread.start();
+
+        // Interrupt innerThread after waiting for 5 seconds
+        System.out.println("Main thread sleeping at " + +System.currentTimeMillis() / 1000);
+        Thread.sleep(5000);
+        innerThread.interrupt();
+        System.out.println("Main thread exiting at " + +System.currentTimeMillis() / 1000);
+    }
+
+    static class ExecuteMe implements Runnable {
+
+        public void run() {
+            try {
+                // sleep for a thousand minutes
+                System.out.println("innerThread goes to sleep at " + System.currentTimeMillis() / 1000);
+                Thread.sleep(1000 * 1000);
+            } catch (InterruptedException ie) {
+                System.out.println("innerThread interrupted at " + +System.currentTimeMillis() / 1000);
+            }
+        }
+    }
+
+}
+```
+
+---
+
+### Thread states
+
+- imageeeeeeeeee classroom ppt
+
+#### New (Newborn State)
+
+- When an instance of the Thread class is created a new thread is born and is known to be in New-born state.
+- That is, when a thread is born, it enters into new state but its execution phase has not been started yet on the instance.
+- In simpler terms, Thread object is created but it cannot execute any program statement because it is not in an execution state of the thread.
+- Only `start()` method can be called on a new thread; otherwise, an `IllegalThreadStateException` will be thrown.
+
+---
+
+#### Runnable State
+
+- The second phase of a new-born thread is the execution phase. When the `start()` method is called on a the new instance of a thread, it enters into a runnable state.
+- In the runnable state, thread is ready for execution and is waiting for availability of the processor (CPU time). There are many threads that are ready for execution, they all are waiting in a queue (line).
+- If all threads have equal priority, a time slot is assigned for each thread execution on the basis of first-come, first-serve manner by CPU. The process of allocating time to threads is known as time slicing. A thread can come into runnable state from running, waiting, or new states.
+
+---
+
+#### Running State
+
+- Running means Processor (CPU) has allocated time slot to thread for its execution. When thread scheduler selects a thread from the runnable state for execution, it goes into running state.
+- In running state, processor gives its time to the thread for execution and executes its run method. It is the state where thread performs its actual functions. A thread can come into running state only from runnable state.
+
+<p>A running thread may give up its control in any one of the following situations and can enter into the blocked state.</p>
+
+- When `sleep()` method is invoked on a thread to sleep for specified time period, the thread is out of queue during this time period. The thread again reenters into the runnable state as soon as this time period is elapsed.
+- When a thread is suspended using `suspend()` method for some time in order to satisfy some conditions. A suspended thread can be revived by using `resume()` method.
+- When `wait()` method is called on a thread to wait for some time. The thread in wait state can be run again using `notify()` or `notifyAll()` method.
+
+---
+
+#### Blocked State
+
+- A thread is considered to be in the blocked state when it is suspended, sleeping, or waiting for some time in order to satisfy some condition.
+
+---
+
+#### Dead State
+
+- A thread dies or moves into dead state automatically when its `run()` method completes the execution of statements.
+- That is, a thread is terminated or dead when a thread comes out of `run()` method. A thread can also be dead when the `stop()` method is called.
+
+---
+
+---
 
 ---
 
@@ -560,7 +832,7 @@ class InterruptExample {
                     System.out.println("I am too sleepy... Let me sleep for an hour.");
                     Thread.sleep(1000 * 60 * 60);
                 } catch (InterruptedException ie) {
-                    System.out.println("The interrupt flag is cleard : " + Thread.interrupted() + " " + Thread.currentThread().isInterrupted());
+                    System.out.println("The interrupt flag is cleared : " + Thread.interrupted() + " " + Thread.currentThread().isInterrupted());
                     Thread.currentThread().interrupt();
                     System.out.println("Oh someone woke me up ! ");
                     System.out.println("The interrupt flag is set now : " + Thread.currentThread().isInterrupted() + " " + Thread.interrupted());
@@ -585,7 +857,7 @@ Output:
 About to wake up the sleepy thread ...
 Woke up sleepy thread ...
 I am too sleepy... Let me sleep for an hour.
-The interrupt flag is cleard : false false
+The interrupt flag is cleared : false false
 Oh someone woke me up !
 The interrupt flag is set now : true true
 ```
@@ -615,3 +887,24 @@ Take a minute to go through the output of the above program. Observe the followi
 - Volatile comes into play because of multiples levels of memory in hardware architecture required for performance enhancements. If there's a single thread that writes to the volatile variable and other threads only read the volatile variable then just using volatile is enough, however, if there's a possibility of multiple threads writing to the volatile variable then "synchronized" would be required to ensure atomic writes to the variable.
 
 ---
+
+### Reentrant Lock& Condition Variables
+
+#### Reentrant Lock
+
+- Java's answer to the traditional mutex is the reentrant lock, which comes with additional bells and whistles.
+- With the reentrant lock, you are free to lock and unlock it in different methods but not with different threads. If you attempt to unlock a reentrant lock object by a thread which didn't lock it initially, you'll get an IllegalMonitorStateException. This behavior is similar to when a thread attempts to unlock a pthread mutex.
+
+---
+
+#### Condition Variable
+
+- We saw how each java object exposes the three methods, wait(),notify() and notifyAll() which can be used to suspend threads till some condition becomes true.
+- You can think of Condition as factoring out these three methods of the object monitor into separate objects so that there can be multiple wait-sets per object.
+- As a reentrant lock replaces synchronized blocks or methods, a condition replaces the object monitor methods.
+
+---
+
+#### java.util.concurrent
+
+- Java's util.concurrent package provides several classes that can be used for solving everyday concurrency problems and should always be preferred than reinventing the wheel. Its offerings include thread-safe data structures such as `ConcurrentHashMap`.
