@@ -329,6 +329,8 @@ both threads are blocked now
 - For example in case of the classical producer/consumer problem the producer thread can signal the consumer thread by incrementing the semaphore count to indicate to the consumer thread to consume the freshly produced item. A mutex in contrast only guards access to shared data among competing threads by forcing threads to serialize their access to critical sections and shared data-structures.
 - 2 imagesss
 
+---
+
 #### Summary
 
 - Mutex implies mutual exclusion and is used to serialize access to critical sections whereas semaphore can potentially be used as a mutex but it can also be used for cooperation and signaling amongst threads. Semaphore also solves the issue of missed signals.
@@ -338,6 +340,8 @@ both threads are blocked now
 - Mutex if locked, must necessarily be unlocked by the same thread. A semaphore can be acted upon by different threads. This is true even if the semaphore has a permit of one
 
 - Think of semaphore analogous to a car rental service such as Hertz. Each outlet has a certain number of cars, it can rent out to customers. It can rent several cars to several customers at the same time but if all the cars are rented out then any new customers need to be put on a waitlist till one of the rented cars is returned. In contrast, think of a mutex like a lone runway on a remote airport. Only a single jet can land or take-off from the runway at a given point in time. No other jet can use the runway simultaneously with the first aircraft.
+
+---
 
 ## Multithreading in Java
 
@@ -349,6 +353,8 @@ both threads are blocked now
 
 - A class and its public APIs are labelled as thread safe if multiple threads can consume the exposed APIs without causing race conditions or state corruption for the class.
 - Note that composition of two or more thread-safe classes doesn't guarantee the resulting type to be thread-safe.
+
+---
 
 #### Synchronized
 
@@ -431,6 +437,8 @@ Marking all the methods of a class synchronized in order to make it thread-safe 
 - As a naive example, consider a class with two completely independent properties accessed by getter methods. Both the getters synchronize on the same object, and while one is being invoked, the other would be blocked because of synchronization on the same object.
 - The solution is to lock at a finer granularity, possibly use two different locks for each property so that both can be accessed in parallel.
 
+---
+
 ### Wait & Notify
 
 #### wait()
@@ -439,15 +447,21 @@ Marking all the methods of a class synchronized in order to make it thread-safe 
 - When a thread executes the `wait` method, it releases the monitor for the object and is placed in the wait queue.
 - Note that the thread must be inside a `synchronized` block of code that synchronizes on the `same object` as the one on which `wait() `is being called, or in other words, the `thread must hold the monitor of the object on which it'll call wait`. If not so, an `illegalMonitor exception` is raised!
 
+---
+
 #### notify()
 
 - Like the wait method, `notify()` can only be called by the thread which owns the monitor for the object on which `notify()` is being called else an illegal monitor exception is thrown.
 - The notify method, will awaken one of the threads in the associated wait queue, i.e., waiting on the thread's monitor.
 - However, this thread will not be scheduled for execution immediately and will compete with other active threads that are trying to synchronize on the same object. The thread which executed notify will also need to give up the object's monitor, before any one of the competing threads can acquire the monitor and proceed forward.
 
+---
+
 #### notifyAll()
 
 - This method is the same as the `notify()` one except that it wakes up all the threads that are waiting on the object's monitor.
+
+---
 
 ### Interrupting Threads
 
@@ -516,12 +530,18 @@ Take a minute to go through the output of the above program. Observe the followi
 
 - Note that there are two methods to check for the interrupt status of a thread. One is the static method Thread.`interrupted()` and the other is `Thread.currentThread().isInterrupted()`. The important difference between the two is that the static method would return the interrupt status and also clear it at the same time. On line 22 we deliberately call the object method first followed by the static method. If we reverse the ordering of the two method calls on line 22, the output for the line would be true and false, instead of true and true.
 
+---
+
 ### Volatile
 
 - The volatile concept is specific to Java.
 - If a variable is declared `volatile` then whenever a thread writes or reads to the volatile variable, the read and write always happen in the main memory.
 - As a further guarantee, all the variables that are visible to the writing thread also get written-out to the main memory alongside the volatile variable. Similarly, all the variables visible to the reading thread alongside the volatile variable will have the latest values visible to the reading thread.
 
+---
+
 #### When is `volatile` thread safe?
 
 - Volatile comes into play because of multiples levels of memory in hardware architecture required for performance enhancements. If there's a single thread that writes to the volatile variable and other threads only read the volatile variable then just using volatile is enough, however, if there's a possibility of multiple threads writing to the volatile variable then "synchronized" would be required to ensure atomic writes to the variable.
+
+---
