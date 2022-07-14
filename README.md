@@ -51,6 +51,7 @@ Each thread gets a slice of time on the CPU and then gets switched out either be
 <p>In order to run a program, the operating system's kernel is first asked to create a new process, which is an environment in which a program executes.</p>
 <br/>
 - <b>Kernel</b>: The kernel is a computer program at the core of a computer's operating system and generally has complete control over everything in the system.
+
 ---
 
 #### Process
@@ -58,6 +59,7 @@ Each thread gets a slice of time on the CPU and then gets switched out either be
 <p>A process is a program in execution.</p>
 <p>A process is an execution environment that consists of instructions, user-data, and system-data segments, as well as lots of other resources such as CPU, memory, address-space, disk and network I/O acquired at runtime.</p>
 <p>A program can have several copies of it running at the same time but a process necessarily belongs to only one program.</p>
+
 ---
 
 #### Thread
@@ -65,6 +67,7 @@ Each thread gets a slice of time on the CPU and then gets switched out either be
 <p>Thread is the smallest unit of execution in a process.</p>
 <p>Usually, there would be some state associated with the process that is shared among all the threads and in turn each thread would have some state private to itself.</p>
 <p>The globally shared state amongst the threads of a process is visible and accessible to all the threads, and special attention needs to be paid when any thread tries to read or write to this global shared state. There are several constructs offered by various programming languages to guard and discipline the access to this global state, which we will go into further detail</p>
+
 ---
 
 #### Caveats
@@ -111,7 +114,9 @@ Lets call one thread as T1 and the other as T2. Say the counter value is equal t
 
 #### Serial execution
 
-## <p>When programs are serially executed, they are scheduled one at a time on the CPU. Once a task gets completed, the next one gets a chance to run. Each task is run from the beginning to the end without interruption. The analogy for serial execution is a circus juggler who can only juggle one ball at a time. Definitely not very entertaining!</p>
+<p>When programs are serially executed, they are scheduled one at a time on the CPU. Once a task gets completed, the next one gets a chance to run. Each task is run from the beginning to the end without interruption. The analogy for serial execution is a circus juggler who can only juggle one ball at a time. Definitely not very entertaining!</p>
+
+---
 
 #### Concurrency
 
@@ -136,6 +141,7 @@ Lets call one thread as T1 and the other as T2. Say the counter value is equal t
 
 <p>Example problems include matrix multiplication, 3D rendering, data analysis, and particle simulation.</p>
 <p>Revisiting our juggler analogy, a parallel system would map to at least two or more jugglers juggling one or more balls. In the case of an operating system, if it runs on a machine with say four CPUs then the operating system can execute four tasks at the same time, making execution parallel. Either a single (large) problem can be executed in parallel or distinct programs can be executed in parallel on a system supporting parallel execution.</p>
+
 ---
 
 #### Concurrency vs Parallelism
@@ -152,6 +158,8 @@ Lets call one thread as T1 and the other as T2. Say the counter value is equal t
 ### Cooperative Multitasking vs Preemptive Multitasking
 
 A system can achieve concurrency by employing one of the following multitasking models:
+
+---
 
 #### Preemptive Multitasking
 
