@@ -25,9 +25,13 @@ Each thread gets a slice of time on the CPU and then gets switched out either be
   <br/>
   All other benefits of multi-threading are extensions of or indirect benefits of the above.
 
+---
+
 #### Performance Gains via Multi-Threading
 
 - The performance gains can be many folds depending on the availability of multiple CPUs and the nature of the problem being solved. However, there will always be problems that don't yield well to a multi-threaded approach and may very well be solved efficiently using a single thread.
+
+---
 
 #### Problems with Threads
 
@@ -35,6 +39,8 @@ Each thread gets a slice of time on the CPU and then gets switched out either be
 - Higher cost of code maintenance: since the code inherently becomes harder to reason about
 - Increased utilization of system resources: Creation of each thread consumes additional memory, CPU cycles for book-keeping and waste of time in context switches.
 - Programs may experience slowdown: as coordination amongst threads comes at a price. Acquiring and releasing locks adds to program execution time. Threads fighting over acquiring locks cause lock contention.
+
+---
 
 ### Program vs Process vs Thread
 
@@ -45,18 +51,21 @@ Each thread gets a slice of time on the CPU and then gets switched out either be
 <p>In order to run a program, the operating system's kernel is first asked to create a new process, which is an environment in which a program executes.</p>
 <br/>
 - <b>Kernel</b>: The kernel is a computer program at the core of a computer's operating system and generally has complete control over everything in the system.
+---
 
 #### Process
 
 <p>A process is a program in execution.</p>
 <p>A process is an execution environment that consists of instructions, user-data, and system-data segments, as well as lots of other resources such as CPU, memory, address-space, disk and network I/O acquired at runtime.</p>
 <p>A program can have several copies of it running at the same time but a process necessarily belongs to only one program.</p>
+---
 
 #### Thread
 
 <p>Thread is the smallest unit of execution in a process.</p>
 <p>Usually, there would be some state associated with the process that is shared among all the threads and in turn each thread would have some state private to itself.</p>
 <p>The globally shared state amongst the threads of a process is visible and accessible to all the threads, and special attention needs to be paid when any thread tries to read or write to this global shared state. There are several constructs offered by various programming languages to guard and discipline the access to this global state, which we will go into further detail</p>
+---
 
 #### Caveats
 
@@ -96,11 +105,13 @@ Lets call one thread as T1 and the other as T2. Say the counter value is equal t
 - T1 comes back and since its state was saved by the operating system, it still has the stale value of 7 that it read before being context switched. It doesn't know that behind its back the value of the variable has been updated. It unfortunately thinks the value is still 7, adds one to it and overwrites the existing 8 with its own computed 8. If the threads executed serially the final value would have been 9.
 </p>
 
+---
+
 ### Concurrency vs Parallelism
 
 #### Serial execution
 
-<p>When programs are serially executed, they are scheduled one at a time on the CPU. Once a task gets completed, the next one gets a chance to run. Each task is run from the beginning to the end without interruption. The analogy for serial execution is a circus juggler who can only juggle one ball at a time. Definitely not very entertaining!</p>
+## <p>When programs are serially executed, they are scheduled one at a time on the CPU. Once a task gets completed, the next one gets a chance to run. Each task is run from the beginning to the end without interruption. The analogy for serial execution is a circus juggler who can only juggle one ball at a time. Definitely not very entertaining!</p>
 
 #### Concurrency
 
@@ -113,6 +124,8 @@ Lets call one thread as T1 and the other as T2. Say the counter value is equal t
 <p>Eg: The classic example of a concurrent system is that of an operating system running on a single core machine. Such an operating system is concurrent but not parallel. It can only process one task at any given point in time but all the tasks being managed by the operating system appear to make progress because the operating system is designed for concurrency. Each task gets a slice of the CPU time to execute and move forward.</p>
 <p>Going back to our circus analogy, a concurrent juggler is one who can juggle several balls at the same time. However, at any one point in time, he can only have a single ball in his hand while the rest are in flight. Each ball gets a time slice during which it lands in the juggler's hand and then is thrown back up. A concurrent system is in a similar sense juggling several processes at the same time.</p>
 
+---
+
 #### Parallelism
 
 <p>A parallel system is one which necessarily has the ability to execute multiple programs at the same time.</p>
@@ -123,6 +136,7 @@ Lets call one thread as T1 and the other as T2. Say the counter value is equal t
 
 <p>Example problems include matrix multiplication, 3D rendering, data analysis, and particle simulation.</p>
 <p>Revisiting our juggler analogy, a parallel system would map to at least two or more jugglers juggling one or more balls. In the case of an operating system, if it runs on a machine with say four CPUs then the operating system can execute four tasks at the same time, making execution parallel. Either a single (large) problem can be executed in parallel or distinct programs can be executed in parallel on a system supporting parallel execution.</p>
+---
 
 #### Concurrency vs Parallelism
 
@@ -132,6 +146,8 @@ Lets call one thread as T1 and the other as T2. Say the counter value is equal t
   <br/>
 
 - Eg: We end the lesson with an analogy, frequently quoted in online literature, of customers waiting in two queues to buy coffee. Single-processor concurrency is akin to alternatively serving customers from the two queues but with a single coffee machine, while parallelism is similar to serving each customer queue with a dedicated coffee machine.
+
+---
 
 ### Cooperative Multitasking vs Preemptive Multitasking
 
@@ -143,10 +159,14 @@ A system can achieve concurrency by employing one of the following multitasking 
 - Furthermore, scheduling of programs or threads on the CPU isn’t predictable. A thread or program once taken off of the CPU by the scheduler can't determine when it will get on the CPU next. As a consequence, if a malicious program initiates an infinite loop, it only hurts itself without affecting other programs or threads. Lastly, the programmer isn't burdened to decide when to give up control back to the CPU in code.
 - Mainly used in all PC OS
 
+---
+
 #### Cooperative Multitasking
 
 - Cooperative Multitasking involves well-behaved programs to voluntarily give up control back to the scheduler so that another program can run. A program or thread may give up control after a period of time has expired or if it becomes idle or logically blocked. The operating system’s scheduler has no say in how long a program or thread runs for.
 - A malicious program can bring the entire system to a halt by busy waiting or running an infinite loop and not giving up control. The process scheduler for an operating system implementing cooperative multitasking is called a cooperative scheduler. As the name implies, the participating programs or threads are required to cooperate to make the scheduling scheme work.
+
+---
 
 ### Synchronous vs Asynchronous
 
@@ -156,6 +176,8 @@ A system can achieve concurrency by employing one of the following multitasking 
 
 - Synchronous execution blocks at each method call before proceeding to the next line of code. A program executes in the same sequence as the code in the source code file. Synchronous execution is synonymous to serial execution.
 
+---
+
 #### Asynchronous
 
 <p>Asynchronous (or async) execution refers to execution that doesn't block when invoking subroutines.</p>
@@ -163,6 +185,8 @@ A system can achieve concurrency by employing one of the following multitasking 
 - By wiki: Asynchronous programming is a means of parallel programming in which a unit of work runs separately from the main application thread and notifies the calling thread of its completion, failure or progress.
 - An asynchronous program doesn’t wait for a task to complete and can move on to the next task.
 - In non-threaded environments, asynchronous programming provides an alternative to threads in order to achieve concurrency and fall under the cooperative multitasking model.
+
+---
 
 ### I/O Bound vs CPU Bound
 
@@ -178,9 +202,13 @@ We write programs to solve problems. Programs utilize various resources of the c
 
 <p>Depending on what a program does, it can require heavier use of one or more resources. For instance, a program that loads gigabytes of data from storage into main memory would hog the main memory of the machine it runs on. Another can be writing several gigabytes to permanent storage, requiring abnormally high disk i/o.</p>
 
+---
+
 #### CPU Bound
 
 <p>Programs which are compute-intensive i.e. program execution requires very high utilization of the CPU (close to 100%) are called CPU bound programs. Such programs primarily depend on improving CPU speed to decrease program completion time. This could include programs such as data crunching, image processing, matrix multiplication etc.</p>
+
+---
 
 #### I/O Bound
 
@@ -189,6 +217,8 @@ We write programs to solve problems. Programs utilize various resources of the c
 - I/O operations can consist of operations that write or read from main memory or network interfaces.
 - Because the CPU and main memory are physically separate a data bus exists between the two to transfer bits to and fro. Similarly, data needs to be moved between network interfaces and CPU/memory. Even though the physical distances are tiny, the time taken to move the data across is big enough for several thousand CPU cycles to go waste. This is why I/O bound programs would show relatively lower CPU utilization than CPU bound programs.
 
+---
+
 #### Caveats
 
 Both types of programs can benefit from concurrent architectures.
@@ -196,15 +226,21 @@ Both types of programs can benefit from concurrent architectures.
 - If a program is CPU bound we can increase the number of processors and structure our program to spawn multiple threads that individually run on a dedicated or shared CPU.
 - For I/O bound programs, it makes sense to have a thread give up CPU control if it is waiting for an I/O operation to complete so that another thread can get scheduled on the CPU and utilize CPU cycles.
 
+---
+
 ### Throughput vs Latency
 
 #### Throughput
 
 Throughput is defined as the rate of doing work or how much work gets done per unit of time. If you are an Instagram user, you could define throughput as the number of images your phone or browser downloads per unit of time.
 
+---
+
 #### Latency
 
 Latency is defined as the time required to complete a task or produce a result. Latency is also referred to as response time. The time it takes for a web browser to download Instagram images from the internet is the latency for downloading the images.
+
+---
 
 #### Throughput vs Latency
 
@@ -216,6 +252,8 @@ In the context of concurrency, throughput can be thought of as time taken to exe
 - As you observe in a multithreaded implementation throughput will go up and latency will go down. More work gets done in less amount of time.
 - In general, the two have an inverse relationship.
 
+---
+
 ### Critical Sections & Race Conditions
 
 <p>This section exhibits how incorrect synchronization in a critical section can lead to race conditions and buggy code.</p>
@@ -224,15 +262,21 @@ In the context of concurrency, throughput can be thought of as time taken to exe
 
 - Critical section is any piece of code that has the possibility of being executed concurrently by more than one thread of the application and exposes any shared data or resources used by the application for access.
 
+---
+
 #### Race Condition
 
 - Race conditions happen when threads run through critical sections without thread synchronization.
 - In a race condition, threads access shared resources or program variables that might be worked on by other threads at the same time causing the application data to be inconsistent.
 - Image goes hereeee
 
+---
+
 ### Deadlocks, Liveness & Reentrant Locks
 
 - Logical follies committed in multithreaded code, while trying to avoid race conditions and guarding critical sections, can lead to a host of subtle and hard to find bugs and side-effects. Some of these incorrect usage patterns have their names and are discussed below.
+
+---
 
 #### Deadlock
 
@@ -277,9 +321,13 @@ The above code can potentially result in a deadlock. Note that deadlock may not 
 
 both threads are blocked now
 
+---
+
 #### Liveness
 
 - Ability of a program or an application to execute in a timely manner is called liveness. If a program experiences a deadlock then it's not exhibiting liveness.
+
+---
 
 #### Live-Lock
 
@@ -287,13 +335,19 @@ both threads are blocked now
 - The best analogy is to think of two persons trying to cross each other in a hallway. John moves to the left to let Arun pass, and Arun moves to his right to let John pass. Both block each other now. John sees he's blocking Arun again and moves to his right and Arun moves to his left seeing he's blocking John. They never cross each other and keep blocking each other. This scenario is an example of a livelock.
 - A process seems to be running and not deadlocked but in reality, isn't making any progress.
 
+---
+
 #### Starvation
 
 - Other than a deadlock, an application thread can also experience starvation, when it never gets CPU time or access to shared resources. Other greedy threads continuously hog shared system resources not letting the starving thread make any progress.
 
+---
+
 #### Reentrant Lock
 
 - Re-entrant locks allow for re-locking or re-entering of a synchronization lock.
+
+---
 
 ### Mutex vs Semaphore
 
@@ -306,6 +360,8 @@ both threads are blocked now
 - Once a thread acquires a mutex, all other threads attempting to acquire the same mutex are blocked until the first thread releases the mutex.
 - imageeeee
 
+---
+
 #### Semaphore
 
 - Semaphore, on the other hand, is used for limiting access to a collection of resources.
@@ -316,12 +372,16 @@ both threads are blocked now
 - A semaphore with a single permit is called a binary semaphore and is often thought of as an equivalent of a mutex, which isn't completely correct.
 - Semaphores can also be used for signaling among threads. This is an important distinction as it allows threads to cooperatively work towards completing a task. A mutex, on the other hand, is strictly limited to serializing access to shared state among competing threads.
 
+---
+
 #### When a Semaphore Masquerades as a Mutex?
 
 <p>A semaphore can potentially act as a mutex if the permits it can give out is set to 1.</p>
 
 - However, the most important difference between the two is that in case of a mutex the same thread must call acquire and subsequent release on the mutex whereas in case of a binary sempahore, different threads can call acquire and release on the semaphore.
 - This leads us to the concept of ownership. <b>A mutex is owned by the thread acquiring it till the point the owning-thread releases it</b>, whereas for a semaphore there's no notion of ownership.
+
+---
 
 #### Semaphore for signaling
 
