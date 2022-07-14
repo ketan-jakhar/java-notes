@@ -425,6 +425,8 @@ both threads are blocked now
 
 <p>To use threads, we need to first create them. In the Java language framework, there are multiple ways of setting up threads.</p>
 
+---
+
 #### Runnable Interface
 
 - When we create a thread, we need to provide the created thread code to execute, or in other words we need to tell the thread what task to execute.
