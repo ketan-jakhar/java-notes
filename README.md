@@ -15,6 +15,8 @@
 Threads can give the illusion of multitasking even though at any given point in time the CPU is executing only one thread.
 Each thread gets a slice of time on the CPU and then gets switched out either because it initiates a task which requires waiting and not utilizing the CPU or it completes its time slot on the CPU.
 
+---
+
 #### Benefits of Threads
 
 - Higher throughput(Throughput is a measure of how many units of information a system can process in a given amount of time), though in some pathetic scenarios it is possible to have the overhead of context switching among threads steal away any throughput gains and result in worse performance than a single-threaded scenario. However such cases are unlikely and an exception, rather than the norm.
