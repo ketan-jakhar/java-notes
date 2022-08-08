@@ -1,5 +1,451 @@
 # JAVA NOTES
 
+## Java Basics
+
+- The method `main` is defined using the keywords `public static void`. The method named `main` is special: Java starts running the code at the first line of the method named `main`.
+- Method definitions are grouped into classes.
+- The main unit of organization in a Java program is the class. The simplest Java program contains just one class. Among other things, a class is a collection of methods.
+
+<br/>
+
+#### Formatted printing with `format`:
+
+- Java provides a method format that works like the printf function in C, or like the string substitution operator % in Python.
+  Eg:
+
+```java
+System.out.format("%f is an approximation of pi.", 3.14159)
+```
+
+---
+
+#### `float` and `double`
+
+- double-precision just means that this representation allows double the precision that an earlier representation of floating-point numbers used. There is also a floating point type called `float` in Java, which uses less memory and has less precision than a `double`. It is rarely used.
+
+---
+
+### Typecasting
+
+- A cast operator is written using parentheses and the name of the target type, and precedes the value to be cast. For example, `(double) 5` yields the value `5.0`.
+
+eg:
+
+```java
+class Cast {
+  public static void main(String args[]) {
+    int numerator = 18;
+    int denominator = 5;
+    System.out.println(numerator / denominator); // 3
+    System.out.println((double) numerator / denominator); // 3.6
+  }
+}
+```
+
+#### Implicit vs. explicit casting
+- Implicit :  For example, if you write 18.0 / 5, then Java will decide to cast 5 into a floating point 5.0, an implicit cast. Another example is double x = 5. The 5 on the right is an integer data type, but Java knows to cast it into a double.
+- 
+---
+
+## Classes and Objects
+
+---
+
+### Fields
+
+---
+
+#### Static and non-static fields
+
+- #### Static:
+
+  - Static fields reside in the class. We don’t need an instance of the class to access static fields. We can access the static fields of a class by just writing the class name before the field:
+
+  ```java
+  class Car {
+    // static fields
+    static int topSpeed = 100;
+    static int maxCapacity = 4;
+  }
+  class Demo {
+    public static void main(String args[]){
+        // Static fields are accessible in the main
+        System.out.println(Car.topSpeed);
+        System.out.println(Car.maxCapacity);
+    }
+  }
+  ```
+
+- #### Non static fields
+
+  - Non-static fields are located in the instances of the class. Each instance of the class can have its own values for these fields.
+  - As non-static fields doesn’t reside in the class, So we need an instance of the class to access non-static fields.
+
+  ```java
+    class Car {
+    // static fields
+    int speed = 100;
+    int capacity = 4;
+    }
+
+    class Demo {
+        public static void main(String args[]){
+            Car obj1 = new Car();
+            System.out.println(obj1.speed);
+            System.out.println(obj1.capacity);
+        }
+    }
+  ```
+
+---
+
+### Methods
+
+<p>Methods act as an interface between a program and the data fields of a class in the program.
+
+These methods can either alter the content of the data fields or use their values to perform a certain computation. All the useful methods should be public, although, some methods which do not need to be accessed from the outside could be kept private.</p>
+
+#### Definition and declaration
+
+- A method is a group of statements that performs some operations and may or may not return a result.
+
+#### Method parameters and return type
+
+- Method parameters make it possible to pass values to the method and return type makes it possible to get the value from the method.
+- The parameters are declared inside the parentheses after the method name while the `return` type is declared before method name.
+
+#### Getters and Setters
+
+- These two types of methods are very popular in OOP. A get method retrieves the value of a particular data field, whereas a set method sets its value.
+- It is a common convention to write the name of the corresponding member fields with the `get` or `set` command.
+
+```java
+// Car class
+class Car {
+
+  private int speed; // member field speed
+
+  // Setter method to set the speed of the car
+  public void setSpeed(int x) {
+    speed = x;
+  }
+
+  // Getter method to get the speed of the car
+  public int getSpeed() {
+    return speed;
+  }
+
+}
+
+class Demo {
+
+   public static void main(String args[]) {
+     Car car = new Car();
+     car.setSpeed(100); // calling the setter method
+     System.out.println(car.getSpeed()); // calling the getter method
+   }
+
+}
+```
+
+#### Method overloading
+
+- Overloading refers to making a method perform different operations based on the nature of its arguments.
+- We could redefine a method several times and give it different arguments and method types. When the method is called, the appropriate definition will be selected by the compiler!
+- Let’s see this in action by overloading the `product` method in the `Calculator` class:
+
+```java
+class Calculator {
+
+  public double product(double x, double y) {
+    return x * y;
+  }
+
+  // Overloading the function to handle three arguments
+  public double product(double x, double y, double z) {
+    return x * y * z;
+  }
+
+  // Overloading the function to handle int
+  public int product(int x, int y){
+    return x * y;
+  }
+
+}
+
+class Demo {
+
+  public static void  main(String args[]) {
+    Calculator cal = new Calculator();
+
+    double x = 10;
+    double y = 20;
+    double z = 5;
+
+    int a = 12;
+    int b = 4;
+
+    System.out.println(cal.product(x, y));
+    System.out.println(cal.product(x, y, z));
+    System.out.println(cal.product(a, b));
+  }
+
+}
+```
+
+```
+Note: Methods that have no arguments and differ only in the return types cannot be overloaded since the compiler won’t be able to differentiate between their calls.
+```
+
+---
+
+#### Advantages of method overloading
+
+- An obvious benefit is that the code becomes simple and clean. We don’t have to keep track of different methods.
+- Polymorphism is a very important concept in object-oriented programming, and method overloading plays a vital role in its implementation.
+
+---
+
+### Constructor
+
+#### What is a constructor?
+
+- The constructor is used to construct the object of a class.
+- It is a special method that outlines the steps that are performed when an instance of a class is created in the program.
+- The constructor is a special method because it does not have a return type. We `don't` even need to write `void` as the return type. It is a good practice to declare/define it as the first member method.
+
+---
+
+#### Default constructor
+
+- The default constructor is the most basic form of a constructor. In a default constructor, we define the default values for the data members of the class. Hence, the constructor creates an object in which the data members are initialized to their default values.
+
+```java
+class Date {
+
+  private int day;
+  private int month;
+  private int year;
+
+
+  // Default constructor
+  public Date() {
+    // We must define the default values for day, month, and year
+    day = 0;
+    month = 0;
+    year = 0;
+  }
+
+  // A simple print function
+  public void printDate(){
+    System.out.println("Date: " + day + "/" + month + "/" + year);
+  }
+
+}
+
+class Demo {
+
+  public static void main(String args[]) {
+    // Call the Date constructor to create its object;
+    Date date = new Date(); // Object created with default values!
+    date.printDate();
+  }
+
+}
+```
+
+- The default constructor does not need to be explicitly defined. Even if we don’t create it, the JVM will call a default constructor and set data members to null or 0.
+- If you don’t define any constructor, the Java compiler will insert a default constructor for you. Thus, once the class is compiled it will always at least have a no-argument constructor.
+
+#### Parameterized constructor
+
+- The default constructor isn’t all that impressive. Sure, we could use `set` methods to set the values for `day`, `month` and `year` ourselves, but this step can be avoided using a parameterized constructor.
+
+```java
+class Date {
+
+  private int day;
+  private int month;
+  private int year;
+
+
+  // Default constructor
+  public Date() {
+    // We must define the default values for day, month, and year
+    day = 0;
+    month = 0;
+    year = 0;
+  }
+
+  // Parameterized constructor
+  public Date(int d, int m, int y){
+    // The arguments are used as values
+    day = d;
+    month = m;
+    year = y;
+  }
+
+  // A simple print function
+  public void printDate(){
+    System.out.println("Date: " + day + "/" + month + "/" + year);
+  }
+}
+
+class Demo {
+
+  public static void main(String args[]) {
+    // Call the Date constructor to create its object;
+    Date date = new Date(1, 8, 2018); // Object created with specified values! // Object created with default values!
+    date.printDate();
+  }
+
+}
+```
+
+---
+
+#### `this` reference variable:
+
+- The `this` reference variable exists for every class.
+- It refers to the `class object` itself. We use `this` when we have an argument which has the same name as a data member.
+- `this.memberName` specifies that we are accessing the `memberName` variable of the particular class.
+
+```java
+class Date {
+
+  private int day;
+  private int month;
+  private int year;
+
+
+  // Default constructor
+  public Date() {
+    // We must define the default values for day, month, and year
+    this.day = 0;
+    this.month = 0;
+    this.year = 0;
+  }
+
+  // Parameterized constructor
+  public Date(int day, int month, int year){
+    // The arguments are used as values
+    this.day = day;
+    this.month = month;
+    this.year = year;
+  }
+
+  // A simple print function
+  public void printDate(){
+    System.out.println("Date: " + day + "/" + month + "/" + year);
+  }
+
+}
+
+class Demo {
+
+  public static void main(String args[]) {
+    // Call the Date constructor to create its object;
+    Date date = new Date(1, 8, 2018); // Object created with specified values! // Object created with default values!
+    date.printDate();
+  }
+
+}
+```
+
+---
+
+#### Calling a constructor from a constructor
+
+- In Java, we can call a constructor from a constructor. When you call a constructor from another constructor, you use the `this` keyword to refer to the constructor.
+
+```java
+class Date {
+
+  private int day;
+  private int month;
+  private int year;
+  private String event;
+
+
+  // Default constructor
+  public Date() {
+    // We must define the default values for day, month, and year
+    this.day = 0;
+    this.month = 0;
+    this.year = 0;
+  }
+
+  // Parameterized constructor
+  public Date(int day, int month, int year){
+    // The arguments are used as values
+    this.day = day;
+    this.month = month;
+    this.year = year;
+  }
+
+  // Parameterized constructor
+  public Date(int day, int month, int year, String event){
+    this(day, month, year); // calling the constructor
+    this.event = event;
+  }
+
+  // A simple print function
+  public void printDate(){
+    System.out.println("Date: " + day + "/" + month + "/" + year + "  --> " + event);
+  }
+
+}
+
+class Demo {
+
+  public static void main(String args[]) {
+    // Call the Date constructor to create its object;
+    Date date = new Date(1, 1, 2019, "New Year"); // Object created with specified values! // Object created with default values!
+    date.printDate();
+  }
+
+}
+```
+
+- The `this` keyword followed by parentheses means that another constructor in the same Java class is being called. At line 27 the second constructor in the class is being called.
+
+---
+
+## Data Hiding Methods
+
+<p>In OOP, objects and classes are the basic entities. Objects are created using classes. One can observe that classes contain data members and objects are created to manipulate and access this data. To make this object-oriented system more reliable and error free, it is a good practice to limit access to the class members.</p>
+
+- Data hiding refers to the concept of hiding the inner workings of a class and simply providing an interface through which the outside world can interact with the class without knowing what’s going on inside.
+- The purpose is to implement classes in such a way that the instances (objects) of these classes should not be able to cause any unauthorized access or change in the original contents of a class. One class does not need to know anything about the underlying algorithms of another class. However, the two can still communicate.
+
+### Encapsulation
+
+- Encapsulation in OOP refers to binding the data and the methods to manipulate that data together in a single unit (class).
+- Depending upon this unit, objects are created. Encapsulation is normally done to hide the state and representation of an object from outside.
+- A class can be thought of as a capsule having methods and data members inside it.
+- As a rule of thumb, a good convention is to declare all the `data members or instance variables` of a class `private`. This will restrict direct access from the code outside that class.
+  - At this point, a question can be raised that if the methods and variables are encapsulated in a class then “how can they be used outside of that class”?
+- One has to implement `public` methods to let the outside world communicate with this class. These methods can be `getters`, `setters` and any other custom methods implemented by the programmer.
+- All the field containing data are private and the methods which provide an interface to access those fields are public.
+
+#### Advantages of encapsulation
+
+- Classes are easier to change and maintain.
+- We can specify which data member we want to keep hidden or accessible.
+- We decide which variables have read/write privileges (increases flexibility).
+
+---
+
+## Inheritance
+
+- In Java whenever we create a `class`, it inherits all the `non-private` methods and fields from the builtin Java `Object` class by default which makes it a very good example of inheritance in Java. The methods defined in the `Object` class come in very handy when you create new classes.
+
+---
+
+---
+
+---
+
 ## Multi Threading
 
 ### Introduction
@@ -86,7 +532,7 @@ Each thread gets a slice of time on the CPU and then gets switched out either be
 int counter = 0; // 1
 // 2
 void incrementCounter() { // 3
-   counter++; // 4
+ counter++; // 4
 } // 5
 ```
 
